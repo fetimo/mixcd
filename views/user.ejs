@@ -1,0 +1,14 @@
+<%- include header.ejs %>
+	<div class="well container">
+		<% if (user) { %>
+			<h3><span class="fa fa-user"></span> <%= user.username %>'s information</h3>
+			<p><%= user.address %></p>
+			<p><%= user.taste %></p>
+			<% if (user.lastfm) { %>
+				<p><a href="http://last.fm/user/<%= user.lastfm %>">Last.fm profile</a></p>
+			<% } %>
+		<% } else { %>
+			<h3>You are not authorised to view this person's information.</h3>
+		<% } %>
+	</div>
+<%- include footer.ejs %>
