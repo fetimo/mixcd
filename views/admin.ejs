@@ -1,15 +1,15 @@
 <%- include header.ejs %>
-	<div class="container">
+	<div class="container tile is-ancestor">
 		<div class="page-header text-center">
 			<h1><span class="fa fa-anchor"></span> Admin area</h1>
 			<a href="/profile" class="btn btn-default btn-sm">Profile</a>
 			<a href="/logout" class="btn btn-default btn-sm">Logout</a>
 		</div>
 		<% if (message.length > 0) { %>
-			<div class="alert alert-info"><%= message %></div>
+			<div class="notification is-info"><%= message %></div>
 		<% } %>
 		<% if (round) { %>
-			<div class="well">
+			<div class="card">
 				<h2>The current round is: <%= round.title %></h2>
 				<p><%= round.total %> have signed up.</p>
 				<p>The signup deadline is <%= round.deadlines.signup.date %> (<%= round.deadlines.signup.from %>).</p>
@@ -22,7 +22,7 @@
 			</div>
 		<% } %>
 		<% if (!round) { %>
-		<div class="well col-md-5">
+		<div class="card is-5">
 			<h2>Create a new round</h2>
 			<form action="/create/round" method="post">
 				<div class="clearfix">
@@ -30,15 +30,15 @@
 						<label for="name">Name</label>
 						<input class="form-control" type="text" name="name" required>
 					</div>
-					<div class="col-md-5 form-group">
+					<div class="is-5 form-group">
 						<label for="start">Start date</label>
 						<input class="form-control" type="text" name="start" pattern="^(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d$" title="Dates must be in mm-dd-yyyy format" >
 					</div>
-					<div class="col-md-5 form-group">
+					<div class="is-5 form-group">
 						<label for="signup">Signup deadline</label>
 						<input class="form-control" type="text" name="signup" pattern="^(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d$" title="Dates must be in mm-dd-yyyy format" >
 					</div>
-					<div class="col-md-5 form-group">
+					<div class="is-5 form-group">
 						<label for="post">Post date</label>
 						<input class="form-control" type="text" name="post" pattern="^(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d$" title="Dates must be in mm-dd-yyyy format" required>
 					</div>
@@ -46,9 +46,9 @@
 				<input class="btn btn-default" type="submit" value="Create new match">		
 			</form>
 		</div>
-		<div class="col-md-1"></div>
+		<div class="is-1"></div>
 		<% } %>
-		<div class="well col-md-6">
+		<div class="card is-6">
 			<h2>Post new announcement</h2>
 			<form action="/create/post" method="post">
 				<div class="form-group">

@@ -1,25 +1,33 @@
 <%- include header.ejs %>
 	<div class="container">
-		<div class="col-sm-6 col-sm-offset-3">
+		<div class="columns">
 
 			<h1><span class="fa fa-sign-in"></span> Login</h1>
 
 			<% if (message.length > 0) { %>
-				<div class="alert alert-danger"><%= message %></div>
+				<div class="notification is-danger"><%= message %></div>
 			<% } %>
 
 			<!-- LOGIN FORM -->
 			<form action="/login" method="post">
-				<div class="form-group">
-					<label>Email</label>
-					<input type="text" class="form-control" name="email">
-				</div>
-				<div class="form-group">
-					<label>Password</label>
-					<input type="password" class="form-control" name="password">
+				<div class="is-half">
+					<div class="field">
+						<div class="control">
+							<label class="label">Email
+								<input type="text" class="input" name="email">
+							</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="control">
+							<label class="label">Password
+								<input type="password" class="input" name="password">
+							</label>
+						</div>
+					</div>
+					<button type="submit" class="button is-primary is-large">Login</button>
 				</div>
 
-				<button type="submit" class="btn btn-warning btn-lg">Login</button>
 			</form>
 
 			<hr>

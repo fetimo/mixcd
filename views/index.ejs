@@ -1,24 +1,29 @@
 <%- include header.ejs %>
 	<div class="container">
-		<div class="jumbotron text-center">
-			<h1>Mixdit</h1>
-			<p>r/mixcd is a <a href="http://reddit.com/r/mixcd">subreddit</a> that connects people and music.</p>
-			<% if (!user) { %>
-				<a href="/login" class="btn btn-default"><span class="fa fa-user"></span> Login</a>
-				<a href="/signup" class="btn btn-default"><span class="fa fa-user"></span> Register</a>
-			<% } else { %>
-				<a href="/profile" class="btn btn-default"><span class="fa fa-user"></span> My profile</a>
-				<a href="/logout" class="btn btn-default"><span class="fa fa-cross"></span> Logout</a>
-			<% } %>
+		<div class="hero text-center is-medium is-primary is-bold">
+			<div class="hero-body">
+				<h1 class="title">Mixdit</h1>
+				<p>r/mixcd is a <a href="http://reddit.com/r/mixcd">subreddit</a> that connects people and music.</p>
+				<% if (!user) { %>
+					<a href="/login" class="button is-link"><span class="fa fa-user"></span> Login</a>
+					<a href="/signup" class="button is-link"><span class="fa fa-user"></span> Register</a>
+				<% } else { %>
+					<a href="/profile" class="button is-link"><span class="fa fa-user"></span> My profile</a>
+					<a href="/logout" class="button is-link"><span class="fa fa-cross"></span> Logout</a>
+				<% } %>
+			</div>
 		</div>
+		<div class="level">
 		<% if (post) { %>
-		<div class="well col-md-5">
-			<h2><%= post.title %></h2>
-			<p><%= post.body %></p>
-		</div>
-		<div class="col-md-1"></div>
+			<div class="column is-half">
+				<div>
+					<h2><%= post.title %></h2>
+					<p><%= post.body %></p>
+				</div>
+			</div>
 		<% } %>
-		<div class="well col-md-6">
+		<div class="column is-half">
+			<div>
 			<h2>How does this work?</h2>
 			<ol>
 				<li>Login and fill in your details, only your paired swappers will be able to see this information.</li>
@@ -26,6 +31,8 @@
 				<li>We'll announce on the subreddit when a swap is occurring, as well as dates to ship by.</li>
 				<li>Confirmation of shipping and receiveing mixes will help us know who is trustworthy. This also will let us know who has not received a mix so we can hook you up with a mix from a volunteer. Our goal is to not let anyone go without a mix who sent one.</li>
 			</ol>
+			</div>
+		</div>
 		</div>
 	</div>
 <%- include footer.ejs %>
