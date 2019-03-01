@@ -16,7 +16,7 @@ const configDB = require('./config/database.js');
 mongoose.connect(configDB.url, { useNewUrlParser: true }); // connect to our database
 const db = mongoose.connection;
 db.on('error', (e) => {
-  console.log('error', e);
+  console.log('db error', e);
 });
 db.once('open', () => {
   // we're connected!

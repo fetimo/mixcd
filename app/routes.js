@@ -1,11 +1,15 @@
 const moment = require('moment');
 
+const Round = require('../app/models/round');
+const Users = require('../app/models/user');
+const Post = require('../app/models/post');
+const UserMatch = require('../app/models/user-match');
+
+const pairing = require('./pair.js');
 
 // route middleware to ensure user is logged in
 function isLoggedIn(req, res, next) {
-  console.log(req.isAuthenticated());
   if (req.isAuthenticated()) {
-    console.log('next');
     return next();
   }
 
@@ -20,63 +24,61 @@ function isAdmin(req, res, next) {
   return res.redirect('/');
 }
 
-module.exports = function (app, passport) {
-  const Round = require('../app/models/round');
-  const Users = require('../app/models/user');
-
-  let currentRound;
-  const setCurrentRound = function () {
-    Round.findOne({ 'deadlines.post': { $gt: Date.now() } }, (err, round) => {
-      if (!round) return;
-      currentRound = {
-        id: round._id,
-        title: round.title,
-        announced: round.announced,
-        paired: round.paired,
-        deadlines: {
-          post: {
-            date: moment(round.deadlines.post).calendar(),
-            from: moment(round.deadlines.post).fromNow(),
-            raw: round.deadlines.post
-          },
-          signup: {
-            date: moment(round.deadlines.signup).calendar(),
-            from: moment(round.deadlines.signup).fromNow(),
-            raw: round.deadlines.signup
-          }
-        },
-        total: Users.count({ 'matches.matchId': round._id })
-      };
-    });
+async function setCurrentRound() {
+  const round = await Round.findOne({ 'deadlines.post': { $gt: Date.now() } });
+  console.log({ round });
+  if (!round) {
+    return null;
+  }
+  return {
+    id: round._id,
+    title: round.title,
+    announced: round.announced,
+    paired: round.paired,
+    deadlines: {
+      post: {
+        date: moment(round.deadlines.post).calendar(),
+        from: moment(round.deadlines.post).fromNow(),
+        raw: round.deadlines.post
+      },
+      signup: {
+        date: moment(round.deadlines.signup).calendar(),
+        from: moment(round.deadlines.signup).fromNow(),
+        raw: round.deadlines.signup
+      }
+    },
+    total: Users.count({ 'matches.matchId': round._id })
   };
-  setCurrentRound();
+}
 
+const currentRound = setCurrentRound();
+
+module.exports = function (app, passport) {
   // normal routes ===============================================================
 
   // show the home page
-  app.get('/', (req, res) => {
-    const Post = require('../app/models/post');
+  app.get('/', async (req, res) => {
     res.render('index.ejs', {
-      post: Post.findOne({}, {}, { sort: { '_id': -1 } }),
+      post: await Post.findOne({}, {}, { sort: { '_id': -1 } }),
       user: req.user
     });
   });
 
   // PROFILE SECTION =========================
-  app.get('/profile', isLoggedIn, (req, res) => {
+  app.get('/profile', isLoggedIn, async (req, res) => {
     const { user } = req;
-    console.log('profile');
+    console.log({ user });
 
     if (user.matches.length) {
       res.render('profile.ejs', {
         user,
-        pairs: Users.where({ 'matches.matchId': currentRound.id }).where('_id').in(user.currentRound(currentRound.id).pair).select('username'),
+        pairs: await Users.where({ 'matches.matchId': currentRound.id }).where('_id').in(user.currentRound(currentRound.id).pair).select('username'),
         round: currentRound,
         message: req.flash('profileMessage')
       });
     }
     res.render('profile.ejs', {
-      user: { local: {}, matches: [] },
+      user,
       message: '',
       round: {}
     });
@@ -114,7 +116,6 @@ module.exports = function (app, passport) {
   });
 
   app.get('/pair', isAdmin, (req, res) => {
-    const pairing = require('./pair.js');
     Round.findOne({ 'deadlines.post': { $gt: Date.now() } }, (err, round) => {
       round.paired = true;
       round.save();
@@ -198,14 +199,24 @@ module.exports = function (app, passport) {
   // UPDATE PROFILE ==============================================================
   // =============================================================================
   app.post('/account/update', isLoggedIn, (req, res) => {
-    const user = req.user;
-    user.username = req.body.username;
-    user.address = req.body.address;
-    user.taste = req.body.taste;
-    user.lastfm = req.body.lastfm;
-    user.country = req.body.country;
-    user.shipToMany = req.body.shipToMany;
-    user.shipAbroad = req.body.shipAbroad;
+    const { user } = req;
+    const {
+      username,
+      address,
+      taste,
+      lastfm,
+      country,
+      shipToMany,
+      shipAbroad
+    } = req.body;
+
+    user.username = username;
+    user.address = address;
+    user.taste = taste;
+    user.lastfm = lastfm;
+    user.country = country;
+    user.shipToMany = shipToMany === 'on';
+    user.shipAbroad = shipAbroad === 'on';
 
     user.save(() => {
       req.flash('profileMessage', 'Succesfully updated your information.');
@@ -218,9 +229,6 @@ module.exports = function (app, passport) {
   // =============================================================================
 
   app.get('/round/join', isLoggedIn, (req, res) => {
-    const UserMatch = require('../app/models/user-match');
-
-
     const signup = new UserMatch.model();
 
     const { user } = req;
@@ -236,7 +244,7 @@ module.exports = function (app, passport) {
     signup.matchId = currentRound.id;
     user.matches.push(signup);
 
-    user.save((err, data) => {
+    user.save(() => {
       req.flash('profileMessage', 'You\'re now signed up to the latest round! Keep an eye on the subreddit and this site for announcements.');
       res.redirect('/profile');
     });
@@ -244,14 +252,14 @@ module.exports = function (app, passport) {
 
   // remove the current round from the users list of people
   app.get('/round/remove', isLoggedIn, (req, res) => {
-    const user = req.user;
+    const { user } = req;
     user.matches.forEach((match, i) => {
       if (currentRound.id.toString() === match.matchId.toString()) {
         user.matches.splice(i, 1);
       }
     });
 
-    user.save((err, data) => {
+    user.save(() => {
       req.flash('profileMessage', 'You\'ve been removed from the latest round.');
       res.redirect('/profile');
     });
@@ -281,11 +289,12 @@ module.exports = function (app, passport) {
   });
 
   app.post('/create/post', isAdmin, (req, res) => {
-    const Post = require('../app/models/post');
     const post = new Post();
 
-    post.title = req.body.title;
-    post.body = req.body.body;
+    const { title, body } = req.body;
+
+    post.title = title;
+    post.body = body;
     post.author = req.user.username;
 
     post.save((err) => {

@@ -37,7 +37,6 @@ module.exports = function (passport) {
   },
   ((req, email, password, done) => {
     User.findOne({ 'local.email': email }, (err, user) => {
-      console.log({ err, user });
       // if there are any errors, return the error
       if (err) {
         return done(err);
@@ -49,11 +48,8 @@ module.exports = function (passport) {
       }
 
       if (!user.validPassword(password)) {
-        console.log('wrong pass');
         return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));
       }
-
-      console.log('logged in');
 
       // all is well, return user
       return done(null, user);
@@ -69,11 +65,9 @@ module.exports = function (passport) {
     passwordField: 'password',
     passReqToCallback: true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
   }, ((req, email, password, done) => {
-    console.log(req.user);
     // check if the user is already logged ina
     if (!req.user) {
       User.findOne({ 'local.email': email }, (err, user) => {
-        console.log({ err, user });
         // if there are any errors, return the error
         if (err) { return done(err); }
 
@@ -86,7 +80,7 @@ module.exports = function (passport) {
 
         newUser.local.email = email;
         newUser.local.password = newUser.generateHash(password);
-        console.log({ newUser });
+
         newUser.save((e) => {
           if (e) { throw e; }
 
