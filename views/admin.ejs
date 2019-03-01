@@ -9,17 +9,17 @@
 			<div class="alert alert-info"><%= message %></div>
 		<% } %>
 		<% if (round) { %>
-		<div class="well">
-			<h2>The current round is: <%= round.title %></h2>
-			<p><%= round.total %> have signed up.</p>
-			<p>The signup deadline is <%= round.deadlines.signup.date %> (<%= round.deadlines.signup.from %>).</p>
-			<p>The post deadline is <%= round.deadlines.post.date %> (<%= round.deadlines.post.from %>).</p>
-			
-			<% if (Date.now() > new Date(round.deadlines.signup.raw) && !round.paired) { %>
-				<a class="btn btn-default" href="/pair">Pair users</a>
-			<% } %>
+			<div class="well">
+				<h2>The current round is: <%= round.title %></h2>
+				<p><%= round.total %> have signed up.</p>
+				<p>The signup deadline is <%= round.deadlines.signup.date %> (<%= round.deadlines.signup.from %>).</p>
+				<p>The post deadline is <%= round.deadlines.post.date %> (<%= round.deadlines.post.from %>).</p>
+				
+				<% if (Date.now() > new Date(round.deadlines.signup.raw) && !round.paired) { %>
+					<a class="btn btn-default" href="/pair">Pair users</a>
+				<% } %>
 
-		</div>
+			</div>
 		<% } %>
 		<% if (!round) { %>
 		<div class="well col-md-5">

@@ -22,11 +22,6 @@ const Users = require('../app/models/user');
 */
 
 module.exports = (function () {
-  // connect to db
-  // mongoose.connect(configDB.url);
-
-  mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
-
   const messages = [];
   return new Promise((resolve) => {
     // get users

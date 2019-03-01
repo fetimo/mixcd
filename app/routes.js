@@ -5,7 +5,6 @@ const Users = require('../app/models/user');
 const Post = require('../app/models/post');
 const UserMatch = require('../app/models/user-match');
 
-const pairing = require('./pair.js');
 
 // route middleware to ensure user is logged in
 function isLoggedIn(req, res, next) {
@@ -26,7 +25,6 @@ function isAdmin(req, res, next) {
 
 async function setCurrentRound() {
   const round = await Round.findOne({ 'deadlines.post': { $gt: Date.now() } });
-  console.log({ round });
   if (!round) {
     return null;
   }
@@ -47,11 +45,11 @@ async function setCurrentRound() {
         raw: round.deadlines.signup
       }
     },
-    total: Users.count({ 'matches.matchId': round._id })
+    total: await Users.count({ 'matches.matchId': round._id })
   };
 }
-
-const currentRound = setCurrentRound();
+let currentRound;
+setCurrentRound().then((round) => currentRound = round);
 
 module.exports = function (app, passport) {
   // normal routes ===============================================================
@@ -67,20 +65,20 @@ module.exports = function (app, passport) {
   // PROFILE SECTION =========================
   app.get('/profile', isLoggedIn, async (req, res) => {
     const { user } = req;
-    console.log({ user });
 
     if (user.matches.length) {
-      res.render('profile.ejs', {
+      return res.render('profile.ejs', {
         user,
         pairs: await Users.where({ 'matches.matchId': currentRound.id }).where('_id').in(user.currentRound(currentRound.id).pair).select('username'),
         round: currentRound,
         message: req.flash('profileMessage')
       });
     }
-    res.render('profile.ejs', {
+    return res.render('profile.ejs', {
       user,
-      message: '',
-      round: {}
+      message: req.flash('profileMessage'),
+      pairs: [],
+      round: currentRound
     });
   });
 
@@ -107,7 +105,6 @@ module.exports = function (app, passport) {
   });
 
   app.get('/admin', isAdmin, (req, res) => {
-    setCurrentRound();
     res.render('admin.ejs', {
       user: req.user,
       round: currentRound,
@@ -116,6 +113,7 @@ module.exports = function (app, passport) {
   });
 
   app.get('/pair', isAdmin, (req, res) => {
+    const pairing = require('./pair.js');
     Round.findOne({ 'deadlines.post': { $gt: Date.now() } }, (err, round) => {
       round.paired = true;
       round.save();
