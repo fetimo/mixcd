@@ -1,0 +1,56 @@
+{
+  "extends": "eslint-config-airbnb-base",
+  "settings": {
+    "ecmascript": 6
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "modules": true,
+      "destructuring": true,
+      "classes": true,
+      "forOf": true,
+      "blockBindings": true,
+      "arrowFunctions": true
+    }
+  },
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "rules": {
+    "max-len": 0,
+    "arrow-body-style": 0,
+    "arrow-parens": 0,
+    "class-methods-use-this": 0,
+    "func-names": 0,
+    "indent": 2,
+    "new-cap": 0,
+    "no-plusplus": 0,
+    "no-return-assign": 0,
+    "quote-props": 0,
+    "camelcase": 1,
+    "template-curly-spacing": [
+      2,
+      "always"
+    ],
+    "no-trailing-spaces": [
+      "error",
+      {
+        "skipBlankLines": true
+      }
+    ],
+    "comma-dangle": [
+      "error",
+      "never"
+    ],
+    "eol-last": [
+      "error",
+      "never"
+    ],
+    "function-paren-newline": ["error", "consistent"],
+    "import/extensions": 0,
+    "import/no-extraneous-dependencies": 0,
+    "import/no-unresolved": 0,
+    "import/prefer-default-export": 0
+  }
+}

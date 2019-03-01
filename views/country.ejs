@@ -247,5 +247,13 @@ var countries = [
 ]
 %>
 
-<%- select_tag('country', countries,  { value: user.country, class: 'form-control' }) %>
+<select class='form-control'>
+	<%
+		for ( var i = 0; i < countries.length; i++ )
+		{
+				var selected = ( user.country === countries[i].value ) ? "selected" : "";
+				%><option value="<%=countries[ i ].value %>" <%=selected %>><%=countries[i].text %></option><%
+		}
+	%>
+</select>
 
