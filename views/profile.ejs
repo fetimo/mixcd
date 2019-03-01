@@ -3,10 +3,17 @@
 		
 		<div class="page-header text-center">
 			<h1 class="title"><span class="fa fa-anchor"></span> Profile Page</h1>
-			<% if (user.admin) { %>
-				<a href="/admin" class="btn btn-default btn-sm">Admin area</a>
-			<% } %>
-			<a href="/logout" class="btn btn-default btn-sm">Logout</a>
+			<div class="tabs">
+				<ul>
+					<li>
+						<% if (user.admin) { %>
+							<a href="/admin" class="btn btn-default btn-sm">Admin area</a>
+						<% } %>
+					</li>
+					<li>
+						<a href="/logout" class="btn btn-default btn-sm">Logout</a>
+					</li>
+			</div>
 		</div>
 		
 		<% if (message.length > 0) { %>
@@ -18,43 +25,59 @@
 			<!-- LOCAL INFORMATION -->
 			<div class="column is-half">
 				<div class="well">
-					<h3><span class="fa fa-user"></span> Your information</h3>
+					<h3 class="subtitle"><span class="fa fa-user"></span> Your information</h3>
 					<form action="/account/update" method="post">
+					<div class="field">	
 						<div class="control">
-							<label class="label" for="username">Reddit username</label>
-							<input class="input" id="username" name="username" type="text" value="<%= user.username || '' %>" required>
+								<label class="label" for="username">Reddit username</label>
+								<input class="input" id="username" name="username" type="text" value="<%= user.username || '' %>" required>
+							</div>
 						</div>
-						<div class="control">
-							<label class="label" for="email">Email</label>
-							<input class="input" id="email" name="email" type="text" value="<%= user.local.email %>">
+						<div class="field">
+							<div class="control">
+								<label class="label" for="email">Email</label>
+								<input class="input" id="email" name="email" type="text" value="<%= user.local.email %>">
+							</div>
 						</div>
-						<div class="control">
-							<label class="label" for="address">Address</label>
-							<textarea class="input" id="address" name="address"><%= user.address || '' %></textarea>
+						<div class="field">
+							<div class="control">
+								<label class="label" for="address">Address</label>
+								<textarea class="input textarea" id="address" name="address"><%= user.address || '' %></textarea>
+							</div>
 						</div>
-						<div class="control">
-							<label class="label" for="country">Country</label>
-							<%- include country.ejs %>
+						<div class="field">
+							<div class="control">
+								<label class="label" for="country">Country</label>
+								<%- include country.ejs %>
+							</div>
 						</div>
-						<div class="control">
-							<label class="label" for="taste">Describe your musical taste</label>
-							<textarea class="input" id="taste" name="taste"><%= user.taste || '' %></textarea>
+						<div class="field">
+							<div class="control">
+								<label class="label" for="taste">Describe your musical taste</label>
+								<textarea class="input textarea" id="taste" name="taste"><%= user.taste || '' %></textarea>
+							</div>
 						</div>
-						<div class="control">
-							<label class="label" for="lastfm">Last.fm username</label>
-							<input class="input" id="lastfm" name="lastfm" type="text" value="<%= user.lastfm || '' %>">
+						<div class="field">
+							<div class="control">
+								<label class="label" for="lastfm">Last.fm username</label>
+								<input class="input" id="lastfm" name="lastfm" type="text" value="<%= user.lastfm || '' %>">
+							</div>
 						</div>
-						<div class="control">
-							<label class="label checkbox" for="shipAbroad">
-								Are you willing to ship abroad?
-								<input id="shipAbroad" name="shipAbroad" type="checkbox" <% if (user.shipAbroad) {%> checked <% } %>>
-							</label>
+						<div class="field">
+							<div class="control">
+								<label class="label checkbox" for="shipAbroad">
+									Are you willing to ship abroad?
+									<input id="shipAbroad" name="shipAbroad" type="checkbox" <% if (user.shipAbroad) {%> checked <% } %>>
+								</label>
+							</div>
 						</div>
-						<div class="control">
-							<label class="label checkbox" for="shipToMany">
-								Are you willing to ship to multiple people?
-								<input id="shipToMany" name="shipToMany" type="checkbox" <% if (user.shipToMany) {%> checked <% } %>>
-							</label>
+						<div class="field">
+							<div class="control">
+								<label class="label checkbox" for="shipToMany">
+									Are you willing to ship to multiple people?
+									<input id="shipToMany" name="shipToMany" type="checkbox" <% if (user.shipToMany) {%> checked <% } %>>
+								</label>
+							</div>
 						</div>
 						<button class="button is-primary">Submit</button>
 					</form>
@@ -68,14 +91,14 @@
 				})) { %>
 				<div class="column is-half">
 					<div class="well">
-						<h3><span class="fa fa-user"></span> Sign up to the current match</h3>
+						<h3 class="subtitle"><span class="fa fa-user"></span> Sign up to the current match</h3>
 						<a class="btn btn-primary" href="/round/join">Sign me up!</a>
 					</div>
 				</div>
 				<% } else { %>
 					<div class="column is-half">
 						<div class="well">
-							<h3><span class="fa fa-heart"></span> You're signed up!</h3>
+							<h3 class="subtitle"><span class="fa fa-heart"></span> You're signed up!</h3>
 							<p>Post your mix by <%= round.deadlines.post.date %> (<%= round.deadlines.post.from %>).</p>
 							<% if (new Date(round.deadlines.signup.raw) > Date.now()) { %>
 							<hr>

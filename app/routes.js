@@ -140,7 +140,10 @@ module.exports = function (app, passport) {
     if (req.isAuthenticated()) {
       res.redirect('/profile');
     } else {
-      res.render('login.ejs', { message: req.flash('loginMessage') });
+      res.render('login.ejs', {
+        user: req.user,
+        message: req.flash('loginMessage')
+      });
     }
   });
 
